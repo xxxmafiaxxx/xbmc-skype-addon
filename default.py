@@ -1,4 +1,3 @@
-
 import os
 import sys
 import xbmcaddon
@@ -24,6 +23,7 @@ __language__ = __settings__.getLocalizedString
 
 if __name__ == "__main__":
     import gui
+
     ui = gui.GUI( "ui.xml" , os.getcwd(), "Default")
     ui.doModal()
     del ui
