@@ -21,6 +21,8 @@ class CallWindow( xbmcgui.WindowXMLDialog ):
     def __init__( self, *args, **kwargs ):
         xbmcgui.WindowXMLDialog.__init__( self, *args, **kwargs )
         self.call = kwargs.get( "call" )
+	self.skype = kwargs.get( "skype" )
+	
 
     def onInit( self ):
 	if(self.call.PartnerDisplayName != ""):
@@ -38,8 +40,8 @@ class CallWindow( xbmcgui.WindowXMLDialog ):
 
 class AnswerWindow( xbmcgui.WindowXMLDialog ):
     def __init__( self, *args, **kwargs ):
-        xbmcgui.WindowXMLDialog.__init__( self, *args, **kwargs )
         self.call = kwargs.get( "call" )
+	self.skype = kwargs.get( "skype" )
 
     def onInit( self ):
         if(self.call.PartnerDisplayName != ""):
@@ -52,60 +54,46 @@ class AnswerWindow( xbmcgui.WindowXMLDialog ):
     def onClick( self, controlId ):
 	if(controlId == 202):
 		self.call.Answer()
-		CallWin = CallWindow( "call.xml" , os.getcwd(), call = self.call)
-		CallWin.doModal()
         elif(controlId == 203):
                 self.call.Finish()
                 
 	self.close()	
 	
 
-
-
 class GUI( xbmcgui.WindowXMLDialog ):
-
-
 ##	Event Handler
 ##	It is called when the status of a call changes. Usually this is how we know
 ##	That there is an incoming call. Spawns a new window with the call details
 
     def CallStatus(self, Call, Status):
 
-		CallWin = CallWindow( "call.xml" , os.getcwd(), call = Call)
-		AnswerWin = AnswerWindow("answer.xml", os.getcwd(), call = Call)
-
+		self.call = Call
 		if(Status ==  Skype4Py.clsUnknown):
 			self.getControl(STATUS_BAR).setLabel( "Unknown status" )
 		elif(Status ==   Skype4Py.clsUnplaced ):
-			 self.getControl(STATUS_BAR).setLabel( "Unplaced" )
+			self.getControl(STATUS_BAR).setLabel( "Unplaced" )
 		elif(Status == Skype4Py.clsRouting ):
-			 self.getControl(STATUS_BAR).setLabel( "Routing..." )
+			self.getControl(STATUS_BAR).setLabel( "Routing..." )
 		elif(Status == Skype4Py.clsEarlyMedia ):
-			 self.getControl(STATUS_BAR).setLabel( "Early Media" )
+			self.getControl(STATUS_BAR).setLabel( "Early Media" )
 		elif(Status == Skype4Py.clsFailed ):
-			 self.getControl(STATUS_BAR).setLabel( "Failed!" )
+			self.getControl(STATUS_BAR).setLabel( "Failed!" )
 		elif(Status == Skype4Py.clsRinging ):
-			 CallWin = CallWindow( "call.xml" , os.getcwd(), call = Call)
-			 if(Call.Type == Skype4Py.cltIncomingP2P or Call.Type == Skype4Py.cltIncomingPSTN):
-				AnswerWin.doModal()
-			 elif(Call.Type == Skype4Py.cltOutgoingP2P  or Call.Type == Skype4Py.cltOutgoingPSTN):
-		                CallWin.doModal()
-				
+			if(Call.Type == Skype4Py.cltIncomingP2P or Call.Type == Skype4Py.cltIncomingPSTN):
+				self.enableAnswerWin()
+			elif(Call.Type == Skype4Py.cltOutgoingP2P  or Call.Type == Skype4Py.cltOutgoingPSTN):
+				pass	
 		elif(Status == Skype4Py.clsInProgress ):
-			 self.getControl(STATUS_BAR).setLabel( "In progress" )
+			self.getControl(STATUS_BAR).setLabel( "In progress" )
 		elif(Status == Skype4Py.clsOnHold ):
-			 self.getControl(STATUS_BAR).setLabel( "On Hold" )
+			self.getControl(STATUS_BAR).setLabel( "On Hold" )
 		elif(Status == Skype4Py.clsFinished ):
-			 if(Call.Type == Skype4Py.cltIncomingP2P or Call.Type == Skype4Py.cltIncomingPSTN):
-				 AnswerWin.close()
-			 elif(Call.Type == Skype4Py.cltOutgoingP2P  or Call.Type == Skype4Py.cltOutgoingPSTN):
-				 CallWin.close()
-			 self.getControl(STATUS_BAR).setLabel( "Finished!" )
-
+			self.getControl(STATUS_BAR).setLabel( "Finished!" )
+			self.disableCallWin()
+			
 		elif(Status == Skype4Py.clsMissed ):
-			 AnswerWin.close()
-			 self.getControl(STATUS_BAR).setLabel( "Missed a call..." )
-
+			self.getControl(STATUS_BAR).setLabel( "Missed a call..." )
+			self.disableAnswerWin()
 
 
     def ConnectionStatus(self, Status):
@@ -139,17 +127,19 @@ class GUI( xbmcgui.WindowXMLDialog ):
 
     def OnlineStatus(self, User, Status):
 	self.loadBuddyList()
+
 ##
-##	Initializes the Skype object and attaches on skype
+##      Initializes the Skype object and attaches on skype
 ##
     def __init__( self, *args, **kwargs ):
-	self.skype = Skype4Py.Skype(Events=self)
-        self.skype.FriendlyName = 'xbmc_skype'
-        self.skype.Attach()
-	
+    	self.skype = Skype4Py.Skype(Events=self)
+    	self.skype.FriendlyName = 'xbmc_skype'
+    	self.skype.Attach()
+
 
     def onInit( self ):
-    	
+    		self.getControl(200).setVisible(False)
+		self.getControl(300).setVisible(False)
 		self.setup_all()
 
 
@@ -195,19 +185,54 @@ class GUI( xbmcgui.WindowXMLDialog ):
 	self.setFocus( self.getControl( BUDDY_LIST ) )
 	self.getControl( BUDDY_LIST ).selectItem( 0 )
 
+    def enableAnswerWin(self):
+        if(self.call.PartnerDisplayName != ""):
+                caller = self.call.PartnerDisplayName
+        else:
+                caller = call.PartnerHandle
+        self.getControl(201).setLabel(caller)
+
+        self.getControl(200).setVisible(True)
+	self.setFocusId(202)
+
+    def disableAnswerWin(self):
+        self.getControl(200).setVisible(False)
+        self.setFocusId(101)
+
+    def enableCallWin(self):
+	if(self.call.PartnerDisplayName != ""):
+        	caller = self.call.PartnerDisplayName
+        else:
+        	caller = call.PartnerHandle
+        self.getControl(301).setLabel(caller)
+
+        self.getControl(300).setVisible(True)
+        self.setFocusId(302)
+
+    def disableCallWin(self):
+        self.getControl(300).setVisible(False)
+        self.setFocusId(101)
+
 
 ##
 ##	Event Handler for the remote/keyboard presses
 ##
     def onClick( self, controlId ):
+	print "in onclick"
 	if(controlId == 120):
 		selectedHandle = self.getControl( 120 ).getSelectedItem()
-		if(hasattr(self, 'call') and self.call.Status == Skype4Py.clsInProgress):
-			self.call.Finish()
-		else:
-	        	self.call = self.skype.PlaceCall(selectedHandle.getLabel())
+	        self.call = self.skype.PlaceCall(selectedHandle.getLabel())
+        elif(controlId == 202):
+                self.call.Answer()
+		self.enableCallWin()
+		self.disableAnswerWin()
+        elif(controlId == 203):
+                self.call.Finish()
+		self.disableAnswerWin()
+	elif(controlId == 302):
+		self.call.Finish()
+		self.disableCallWin()
 
-		
     def onFocus( self, controlId ):
 
     	self.controlId = controlId
