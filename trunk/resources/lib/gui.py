@@ -17,49 +17,6 @@ CONNECT_STATUS = 101
 
 
 
-class CallWindow( xbmcgui.WindowXMLDialog ):
-    def __init__( self, *args, **kwargs ):
-        xbmcgui.WindowXMLDialog.__init__( self, *args, **kwargs )
-        self.call = kwargs.get( "call" )
-	self.skype = kwargs.get( "skype" )
-	
-
-    def onInit( self ):
-	if(self.call.PartnerDisplayName != ""):
-        	caller = self.call.PartnerDisplayName
-        else:
-                caller = self.call.PartnerHandle
-
-	self.getControl( 201 ).setLabel(caller)
-
-    def onClick( self, controlId ):
-        if(controlId == 202):
-		self.call.Finish()
-		self.close()
-	
-
-class AnswerWindow( xbmcgui.WindowXMLDialog ):
-    def __init__( self, *args, **kwargs ):
-        self.call = kwargs.get( "call" )
-	self.skype = kwargs.get( "skype" )
-
-    def onInit( self ):
-        if(self.call.PartnerDisplayName != ""):
-                caller = self.call.PartnerDisplayName
-        else:
-                caller = self.call.PartnerHandle
-
-        self.getControl( 201 ).setLabel(caller)
-
-    def onClick( self, controlId ):
-	if(controlId == 202):
-		self.call.Answer()
-        elif(controlId == 203):
-                self.call.Finish()
-                
-	self.close()	
-	
-
 class GUI( xbmcgui.WindowXMLDialog ):
 ##	Event Handler
 ##	It is called when the status of a call changes. Usually this is how we know
@@ -160,18 +117,50 @@ class GUI( xbmcgui.WindowXMLDialog ):
 			listitem = xbmcgui.ListItem( label=F.Handle, label2=F.FullName)
 
 		# Set all the properties of each user
-		listitem.setProperty("about", F.About);
+		listitem.setProperty("about", F.About)
 		#listitem.setProperty("birthday", F.Birthday);
-		listitem.setProperty("city", F.City);
-		listitem.setProperty("country", F.Country);
-		listitem.setProperty("countrycode", F.CountryCode);
-		listitem.setProperty("displayname", F.DisplayName);
-		listitem.setProperty("language", F.Language);
-		listitem.setProperty("moodtext", F.MoodText);
-		listitem.setProperty("phonehome", F.PhoneHome);
-		listitem.setProperty("phonemobile", F.PhoneMobile);
-		listitem.setProperty("phoneoffice", F.PhoneOffice);
-		
+		listitem.setProperty("countrycode", F.CountryCode)
+		listitem.setProperty("displayname", F.DisplayName)
+		listitem.setProperty("language", F.Language)
+		listitem.setProperty("moodtext", F.MoodText)
+		listitem.setProperty("phonehome", F.PhoneHome)
+		listitem.setProperty("phonemobile", F.PhoneMobile)
+		listitem.setProperty("phoneoffice", F.PhoneOffice)
+		listitem.setProperty("homepage", F.Homepage)
+
+
+                # set the sex icon
+		# this is details line 1 and it's hardcoded. Everything else is on variable lines
+                if(F.Sex == Skype4Py.usexMale):
+                        listitem.setProperty( "sex", "male.png")
+                elif(F.Sex ==  Skype4Py.usexFemale ):
+                        listitem.setProperty( "sex", "female.png")
+                else:
+                        listitem.setProperty( "sex", "nosex.png")
+
+
+		line = 1
+		# set the location
+		location = ""
+		if(F.City):
+			location = F.City + ", "
+		if(F.Province):
+			location = location + F.Province + ", "
+		if(F.Country):
+			location = location + F.Country
+		listitem.setProperty("location", location)
+		# set the country flag icon
+		if(F.CountryCode):
+			listitem.setProperty( "countrycode", F.CountryCode + ".png")
+
+                if(location):
+			listitem.setProperty( "locationY", "200")
+			line = line + 1
+		if(F.About):
+			listitem.setProperty( "aboutY", str(100))
+			line = line + 1
+
+		# set the status icon
 		if(F.OnlineStatus == Skype4Py.olsOnline):
 			listitem.setProperty( "statusIcon", "online.png")
 		elif(F.OnlineStatus == Skype4Py.olsOffline):
@@ -197,7 +186,7 @@ class GUI( xbmcgui.WindowXMLDialog ):
 
     def disableAnswerWin(self):
         self.getControl(200).setVisible(False)
-        self.setFocusId(101)
+        self.setFocusId(120)
 
     def enableCallWin(self):
 	if(self.call.PartnerDisplayName != ""):
@@ -211,17 +200,17 @@ class GUI( xbmcgui.WindowXMLDialog ):
 
     def disableCallWin(self):
         self.getControl(300).setVisible(False)
-        self.setFocusId(101)
+        self.setFocusId(120)
 
 
 ##
 ##	Event Handler for the remote/keyboard presses
 ##
     def onClick( self, controlId ):
-	print "in onclick"
 	if(controlId == 120):
 		selectedHandle = self.getControl( 120 ).getSelectedItem()
 	        self.call = self.skype.PlaceCall(selectedHandle.getLabel())
+		self.enableCallWin()
         elif(controlId == 202):
                 self.call.Answer()
 		self.enableCallWin()

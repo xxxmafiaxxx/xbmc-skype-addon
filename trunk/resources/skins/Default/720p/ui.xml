@@ -209,7 +209,7 @@
             				<info>ListItem.Label2</info>
 				</control>
           
-				<!-- Don't really remember -->
+				<!-- Don't really remember - have to find out or else delete.... -->
 				<control type="label">
             				<posx>330</posx>
             				<posy>0</posy>
@@ -221,7 +221,6 @@
             				<selectedcolor>green</selectedcolor>
             				<align>left</align>
 				</control>
-
 			</focusedlayout>
 		</control>
 
@@ -244,6 +243,161 @@
 				<showonepage>false</showonepage>
 				<visible>Control.IsVisible(120)</visible>
 			</control>
+		</control>
+
+	<!-- User Details Control Group -->
+		<control type="group" id="150">
+			<posx>410</posx>
+			<posy>126</posy>
+                        <control type="image" id="151">
+                        	<posx>5</posx>
+                                <posy>0</posy>
+                                <width>25</width>
+                                <height>40</height>
+                                <texture>$INFO[Container(120).ListItem.Property(sex)]</texture>
+                        </control>
+
+			<control type="label" id="152">
+                                <posx>40</posx>
+                                <posy>0</posy>
+                                <width>315</width>
+                                <height>40</height>
+                                <font>Font_Keyboard_NoCaps</font>
+                                <aligny>center</aligny>
+                                <textcolor>white</textcolor>
+                                <align>left</align>
+                                <selectedcolor>green</selectedcolor>
+                                <label>$INFO[Container(120).ListItem.Label2]</label>
+                        </control>
+
+                        <control type="image" id="153">
+				<posx>5</posx>
+				<posy>55</posy>
+                                <width>22</width>
+                                <height>16</height>
+                                <texture>flags/$INFO[Container(120).ListItem.Property(countrycode)]</texture>
+                        </control>
+			
+			<control type="label" id="154">
+				<posx>40</posx>
+				<posy>40</posy>
+	                        <width>315</width>
+	                        <height>40</height>
+	                        <font>font18</font>
+	                        <aligny>center</aligny>
+	                        <textcolor>white</textcolor>
+	                        <align>left</align>
+	                        <selectedcolor>green</selectedcolor>
+	                        <label>$INFO[Container(120).ListItem.Property(location)]</label>
+			</control>
+                        <control type="image" id="155">
+				<posx>0</posx>
+				<posy>100</posy>
+                                <width>30</width>
+                                <height>30</height>
+                                <texture>info.png</texture>
+                        </control>
+                        <control type="label" id="156">
+				<posx>40</posx>
+				<posy>80</posy>
+                                <width>630</width>
+                                <height>80</height>
+                                <font>font18</font>
+                                <aligny>center</aligny>
+                                <textcolor>white</textcolor>
+                                <align>left</align>
+                                <selectedcolor>green</selectedcolor>
+				<wrapmultiline>true</wrapmultiline>
+                                <label>$INFO[Container(120).ListItem.Property(about)]</label>
+			</control>
+
+			<!-- homepage -->
+                        <control type="image" id="157">
+                                <posx>3</posx>
+                                <posy>180</posy>
+                                <width>23</width>
+                                <height>23</height>
+                                <texture>www.png</texture>
+                        </control>
+                        <control type="label" id="158">
+                                <posx>40</posx>
+                                <posy>180</posy>
+                                <width>630</width>
+                                <height>23</height>
+                                <font>font18</font>
+                                <aligny>center</aligny>
+                                <textcolor>white</textcolor>
+                                <align>left</align>
+                                <selectedcolor>green</selectedcolor>
+                                <wrapmultiline>true</wrapmultiline>
+                                <label>$INFO[Container(120).ListItem.Property(homepage)]</label>
+			</control>
+			
+			<!-- normal phone numbers -->
+			<control type="image" id="159">
+                                <posx>1</posx>
+                                <posy>220</posy>
+                                <width>28</width>
+                                <height>21</height>
+                                <texture>homephone.png</texture>
+                        </control>
+                        <control type="label" id="160">
+                                <posx>40</posx>
+                                <posy>220</posy>
+                                <width>630</width>
+                                <height>23</height>
+                                <font>font18</font>
+                                <aligny>center</aligny>
+                                <textcolor>white</textcolor>
+                                <align>left</align>
+                                <selectedcolor>green</selectedcolor>
+                                <wrapmultiline>true</wrapmultiline>
+                                <label>$INFO[Container(120).ListItem.Property(phonehome)]</label>
+                        </control>
+
+                        <control type="image" id="161">
+                                <posx>5</posx>
+                                <posy>260</posy>
+                                <width>20</width>
+                                <height>25</height>
+                                <texture>cellphone.png</texture>
+                        </control>
+                        <control type="label" id="162">
+                                <posx>40</posx>
+                                <posy>260</posy>
+                                <width>630</width>
+                                <height>23</height>
+                                <font>font18</font>
+                                <aligny>center</aligny>
+                                <textcolor>white</textcolor>
+                                <align>left</align>
+                                <selectedcolor>green</selectedcolor>
+                                <wrapmultiline>true</wrapmultiline>
+                                <label>$INFO[Container(120).ListItem.Property(phonemobile)]</label>
+                        </control>
+
+                        <control type="image" id="163">
+                                <posx>2</posx>
+                                <posy>300</posy>
+                                <width>21</width>
+                                <height>25</height>
+                                <texture>officephone.png</texture>
+                        </control>
+                        <control type="label" id="164">
+                                <posx>40</posx>
+                                <posy>300</posy>
+                                <width>630</width>
+                                <height>23</height>
+                                <font>font18</font>
+                                <aligny>center</aligny>
+                                <textcolor>white</textcolor>
+                                <align>left</align>
+                                <selectedcolor>green</selectedcolor>
+                                <wrapmultiline>true</wrapmultiline>
+                                <label>$INFO[Container(120).ListItem.Property(phoneoffice)]</label>
+                        </control>
+
+
 		</control>
 	</control>
 
