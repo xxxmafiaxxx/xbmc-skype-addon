@@ -1,0 +1,1 @@
+This is a project to bring the world of skype to the XBMC media player
